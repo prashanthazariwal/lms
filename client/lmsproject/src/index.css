@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("./assets/fonts/Montserrat.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "StackSansHeadline";
+  src: url("./assets/fonts/StackSansHeadline.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer base {
+  .font-Montserrat {
+    font-family: "Montserrat", sans-serif;
+  }
+  .font-StackSansHeadline {
+    font-family: "StackSansHeadline", sans-serif;
+  }
+}
