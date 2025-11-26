@@ -1,0 +1,40 @@
+# Root Ignore File
+
+# Ignore Node Modules Everywhere
+**/node_modules/
+
+# Ignore Build Output Everywhere
+**/dist/
+**/build/
+
+# Ignore All Environment Files
+**/*.env
+
+# Ignore Logs
+**/*.log
+
+# Ignore OS Files
+.DS_Store
+Thumbs.db
+
+# Ignore Vite/React Cache
+**/.vite/
+**/.cache/
+
+# Ignore Coverage
+coverage/
+
+# Backend
+server/.env
+server/node_modules/
+
+# Frontend
+client/lmsproject/.env
+client/lmsproject/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

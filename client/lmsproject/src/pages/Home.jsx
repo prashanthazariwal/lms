@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { getCurrentUser, signout } from "../store/slices/authSlice";
 import { useState } from "react";
 import { useRef } from "react";
+import HeroSection from "../sections/HeroSection";
 
 /**
  * Home/Dashboard Page
@@ -56,7 +57,7 @@ function Home() {
     <div className="min-h-screen bg-[#FFFFFF]">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
-        home page
+        <HeroSection />
       </main>
     </div>
   );
