@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 async function safeUnlink(filePath) {
   try {
     if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);

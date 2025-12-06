@@ -5,6 +5,7 @@ import { getCurrentUser, signout } from "../store/slices/authSlice";
 import { useState } from "react";
 import { useRef } from "react";
 import HeroSection from "../sections/HeroSection";
+import ExploreCources from "../sections/ExploreCources";
 
 /**
  * Home/Dashboard Page
@@ -54,12 +55,13 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF]">
+    <>
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4">
         <HeroSection />
+        <ExploreCources/>
       </main>
-    </div>
+    </>
   );
 }
 

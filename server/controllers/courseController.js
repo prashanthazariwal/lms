@@ -8,13 +8,14 @@ import safeUnlink from "../utils/safeUnlick.js";
 export const uploadCourseThumbnail = upload.single('thumbnail');
 export const createCourse = async (req, res) => {
     try {
-        const { title, category} = req.body;
-        if (!title || !category) {
+        const { title, category , description} = req.body;
+        if (!title || !category || !description) {
             throw new ApiError("All fields are required", 400);
         }
         const newCourse = await Course.create({
             title,
             category,
+            description,
             creator : req.user._id,
         });
          return res
@@ -57,56 +58,68 @@ export const getCreatorCourses = async (req, res) => {
         .json(new ApiResponse(error.message, error.statusCode, null));
     }   
 }
-export const editCourse = async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const { title, category, description, level, price, subTitle, isPublished } = req.body;
-        
-        let thumbnailUrl = "";
 
+export const editCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { title, category, description, level, price, subTitle, isPublished } = req.body;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      throw new ApiError("Course not found", 404);
+    }
+
+    let thumbnailUrl = "";
+    let thumbnailPublicId = "";
+
+    // Upload new thumbnail only if user sends a file
     if (req.file) {
       const uploadResult = await cloudinary.uploader.upload(req.file.path, {
         folder: "nocap_courses",
       });
+
       thumbnailUrl = uploadResult.secure_url;
+      thumbnailPublicId = uploadResult.public_id;
+
+      // Delete old cloudinary image (only if new uploaded)
+      if (course.thumbnailPublicId) {
+        await cloudinary.uploader.destroy(course.thumbnailPublicId);
+      }
     }
 
-        const course = await Course.findById(courseId);
-        if (!course) {
-            throw new ApiError("Course not found", 404);
-        }
-        if(course.thumbnailPublicId){
-            try {
-                await cloudinary.uploader.destroy(course.thumbnailPublicId);
-            } catch (destroyErr) {
-                console.warn('Failed to delete previous Cloudinary image', destroyErr);
-            }
-            
-        }
-        // Update course fields
-        course.title = title || course.title;
-        course.category = category || course.category;
-        course.description = description || course.description;
-        course.level = level || course.level;
-        course.price = price || course.price;
-        course.subTitle = subTitle || course.subTitle;
-        course.isPublished = isPublished !== undefined ? isPublished : course.isPublished;
-        if (thumbnailUrl) {
-            course.thumbnail = thumbnailUrl;
-            course.thumbnailPublicId = uploadResult.public_id;
-        }
-        await safeUnlink(req.file.path);
-        await course.save();
+    // Update fields
+    course.title = title || course.title;
+    course.category = category || course.category;
+    course.description = description || course.description;
+    course.level = level || course.level;
+    course.price = price || course.price;
+    course.subTitle = subTitle || course.subTitle;
+    course.isPublished = isPublished !== undefined ? isPublished : course.isPublished;
 
-        return res
-        .status(200)
-        .json(new ApiResponse("Course updated successfully", 200, course));
-    } catch (error) {
-        return res
-        .status(error.statusCode || 500)
-        .json(new ApiResponse(error.message, error.statusCode, null));
+    // Update thumbnail only if new uploaded
+    if (thumbnailUrl) {
+      course.thumbnail = thumbnailUrl;
+      course.thumbnailPublicId = thumbnailPublicId;
     }
-}
+
+    // Safe unlink only if file exists
+    if (req.file) {
+      await safeUnlink(req.file.path);
+    }
+
+    await course.save();
+
+    return res.status(200).json(
+      new ApiResponse("Course updated successfully", 200, course)
+    );
+
+  } catch (error) {
+    return res
+      .status(error.statusCode || 500)
+      .json(new ApiResponse(error.message, error.statusCode, null));
+  }
+};
+
 
 export const getCourseDetails = async (req, res) => {
     try {
