@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRef } from "react";
 import HeroSection from "../sections/HeroSection";
 import ExploreCources from "../sections/ExploreCources";
+import PopularCources from "../sections/PopularCources";
 
 /**
  * Home/Dashboard Page
@@ -60,6 +61,7 @@ function Home() {
       <main className="max-w-7xl mx-auto px-4">
         <HeroSection />
         <ExploreCources/>
+        <PopularCources/>
       </main>
     </>
   );

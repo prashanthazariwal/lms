@@ -10,11 +10,11 @@ import cloudinary from "../config/cloudinary.js";
 import { upload } from "../config/multerConfig.js";
 import safeUnlink from "../utils/safeUnlick.js";
 
-
+// process.env.NODE_ENV === "production"
 // Cookie options for refresh token
 const refreshCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: false,
   sameSite: "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
