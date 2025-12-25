@@ -7,7 +7,7 @@ import sendMail from "../config/sendMail.js";
 import fs from "fs";
 import { dirname as _dirnameFn } from 'path';
 import cloudinary from "../config/cloudinary.js";
-import { upload } from "../config/multerConfig.js";
+import { uploadImage } from "../config/multerConfig.js";
 import safeUnlink from "../utils/safeUnlick.js";
 
 // process.env.NODE_ENV === "production"
@@ -30,7 +30,7 @@ function parseCookie(headerCookie, userName) {
   return null;
 }
 
-export const uploadProfilePic = upload.single('profilePicture');
+export const uploadProfilePic = uploadImage.single('profilePicture');
 
 
 

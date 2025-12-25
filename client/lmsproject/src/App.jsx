@@ -9,6 +9,9 @@ import ForgetPassword from "./pages/ForgetPassword";
 import EditProfile from "./pages/EditProfile";
 import Layout from "./layouts/Layout"; // 👈 Import the new layout component
 import EditCource from "./pages/EditCource";
+import AllCourcesPage from "./pages/AllCourcesPage";
+import CreateLecturePage from "./pages/CreateLecturePage";
+import ViewCoursePage from "./pages/ViewCoursePage";
 
 function App() {
   return (
@@ -32,8 +35,10 @@ function App() {
           <Route path="/edit-profile" element={<EditProfile />} />
           {/* You can add more protected pages here, e.g.: */}
           <Route path="/instructor/dashboard" element={<Dashboard />} />
-          <Route path="editCourse/:courseId" element={<EditCource />} />
-          {/* <Route path="/courses" element={<Courses />} /> */}
+          <Route path="/instructor/editCourse/:courseId" element={<EditCource />} />
+          <Route path="/instructor/add-lecture/:courseId" element={<CreateLecturePage />} />
+          <Route path="/all-cources" element={<AllCourcesPage />} />
+          <Route path="/view-course/:courseId" element={<ViewCoursePage/>} />
         </Route>
 
         {/* ---------- Redirect unknown routes ---------- */}

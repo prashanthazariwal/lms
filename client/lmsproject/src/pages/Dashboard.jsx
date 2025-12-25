@@ -68,7 +68,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 ">
                 {creatorCourses.map((course) => (
                   <div
-                    key={course._id}
+                    key={course?._id}
                     className=" hover:shadow-2xs hover:shadow-cyan-500 transition-all w-[20vw] bg-white rounded-lg p-4 flex flex-col justify-between"
                   >
                     <div>
@@ -98,7 +98,7 @@ const Dashboard = () => {
                         <button
                           variant="outline"
                           className="flex-1 border border-neutral-300 rounded-xl hover:bg-neutral-100 flex items-center justify-center p-2"
-                          onClick={() => navigate(`/editCourse/${course._id}`)}
+                          onClick={() => navigate(`/instructor/editCourse/${course._id}`)}
                         >
                           <Edit className="mr-2 h-4 w-4" />
                           Edit

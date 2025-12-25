@@ -239,34 +239,64 @@ export const resetPassword = async (email, password) => {
 export const createCourse = async (courseData) => {
   const response = await api.post("/courses/create-course", courseData);
   return response.data; // Returns: { message, statusCode, data }
-}
+};
 
 export const getAllPublishedCourses = async () => {
   const response = await api.get("/courses/published");
   return response.data; // Returns: { message, statusCode, data: courses }
-}
+};
 export const getCreatorCourses = async () => {
   const response = await api.get("/courses/creator-courses");
   return response.data; // Returns: { message, statusCode, data: courses }
-}
+};
 export const getCourseById = async (courseId) => {
   const response = await api.get(`/courses/${courseId}`);
   return response.data; // Returns: { message, statusCode, data: course }
+};
+export const editCourse = async (courseId, updatedData) => {
+  const response = await api.patch(
+    `/courses/editcourse/${courseId}`,
+    updatedData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+export const deleteCourse = async (courseId) => {
+  const response = await api.delete(`/courses/remove/${courseId}`);
+  return response.data;
+};
+
+// lecture APIs
+export const createLecture = async (courseId, lectureData) => {
+  const response = await api.post(
+    `/lectures/create-lecture/${courseId}`,
+    lectureData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+export const getLecturesByCourse = async (courseId) => {
+  const response = await api.get(`/lectures/course-lectures/${courseId}`);
+  return response.data;
+};
+export const editLecture = async (lectureId, updatedData) => {
+  const response = await api.patch(
+    `/lectures/edit-lecture/${lectureId}`,
+    updatedData,
+    {
+      headers: {  
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
 }
-export const editCourse = async (courseId , updatedData) =>{
-  const response = await api.patch(`/courses/editcourse/${courseId}`, updatedData , {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  })
-  return response.data
-}
-export const deleteCourse = async (courseId) =>{
-  const response = await api.delete(`/courses/remove/${courseId}`)
-  return response.data
-}
-
-
-
-
 export default api;

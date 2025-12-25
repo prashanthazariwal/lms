@@ -1,4 +1,3 @@
-// server/config/multerConfig.js
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -6,24 +5,21 @@ import fs from "fs";
 // Temporary upload directory
 const TMP_UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
-// Ensure the uploads folder exists
 if (!fs.existsSync(TMP_UPLOAD_DIR)) {
   fs.mkdirSync(TMP_UPLOAD_DIR, { recursive: true });
 }
 
-// Define multer storage
+// Storage
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, TMP_UPLOAD_DIR);
-  },
-  filename: function (req, file, cb) {
+  destination: (req, file, cb) => cb(null, TMP_UPLOAD_DIR),
+  filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
 
-// File filter (accept images only)
-function fileFilter(req, file, cb) {
+/* ---------------- IMAGE FILTER ---------------- */
+function imageFileFilter(req, file, cb) {
   const allowed = ["image/jpeg", "image/png", "image/webp"];
   if (allowed.includes(file.mimetype)) {
     cb(null, true);
@@ -32,7 +28,29 @@ function fileFilter(req, file, cb) {
   }
 }
 
-// Set limits (e.g., 5 MB)
-const limits = { fileSize: 5 * 1024 * 1024 };
+/* ---------------- VIDEO FILTER ---------------- */
+function videoFileFilter(req, file, cb) {
+  const allowed = ["video/mp4", "video/mov", "video/avi", "video/mkv"];
+  if (allowed.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only video files are allowed!"), false);
+  }
+}
 
-export const upload = multer({ storage, fileFilter, limits });
+// Limits
+const imageLimits = { fileSize: 5 * 1024 * 1024 };        // 5MB
+const videoLimits = { fileSize: 500 * 1024 * 1024 };     // 500MB
+
+// Export two upload middlewares
+export const uploadImage = multer({
+  storage,
+  fileFilter: imageFileFilter,
+  limits: imageLimits,
+});
+
+export const uploadVideo = multer({
+  storage,
+  fileFilter: videoFileFilter,
+  limits: videoLimits,
+});

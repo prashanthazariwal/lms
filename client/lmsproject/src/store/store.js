@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
 import courseReducer from "./slices/courseSlice";
-
+import lectureReducer from "./slices/lectureSlice";
 /**
  * Redux Store Configuration
  *
@@ -31,6 +31,7 @@ export const store = configureStore({
     profile: profileReducer, // Profile state (user, upload progress, etc.)
     // Later you can add more slices:
     courses: courseReducer,
+    lectures: lectureReducer,
     // students: studentReducer,
   },
 });

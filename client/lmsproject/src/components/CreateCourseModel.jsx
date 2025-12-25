@@ -18,6 +18,7 @@ const CreateCourseModel = ({ isModelOpen, setIsModelOpen }) => {
       description,
     };
     try {
+      console.log(courseData);
       const res = await dispatch(createCourse(courseData)); // WAIT FOR API
       console.log("Course created:", res);
       await dispatch(getCreatorCourses());
@@ -73,15 +74,22 @@ const CreateCourseModel = ({ isModelOpen, setIsModelOpen }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700">
-                Category
-              </label>
-              <input
-                type="text"
-                value={category}
+              <label className="block mb-1 font-medium">Category</label>
+              <select
+                name="category"
+                id="category"
+                className="w-full border px-3 py-2 rounded"
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              />
+                value={category}
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+                <option value="web Development">web Development</option>
+                <option value="Graphic Design">Graphic Design</option>
+                <option value="mobile Development">mobile Development</option>
+                <option value="Data Science">Data Science</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700">
@@ -106,7 +114,7 @@ const CreateCourseModel = ({ isModelOpen, setIsModelOpen }) => {
         </div>
       )}
     </div>,
-    document.getElementById("createCourseModel")
+    document.getElementById("portal")
   );
 };
 

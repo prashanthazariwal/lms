@@ -43,7 +43,9 @@ app.use((err, req, res, next) => {
 // routes
 import userRoutes from "./routes/user.route.js";
 import courseRoutes from "./routes/course.route.js";
+import lectureRoutes from "./routes/lecture.route.js"
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/lectures", lectureRoutes);
 
 export default app;

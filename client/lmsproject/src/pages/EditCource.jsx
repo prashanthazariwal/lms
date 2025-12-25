@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import Button from "../components/Button";
 import { useAppSelector } from "../store/hooks";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteCourse, editCourse, getCourseDetails, getCreatorCourses } from "../store/slices/courseSlice";
+import {
+  deleteCourse,
+  editCourse,
+  getCourseDetails,
+  getCreatorCourses,
+} from "../store/slices/courseSlice";
 import { useDispatch } from "react-redux";
 
 const EditCource = () => {
@@ -10,6 +15,7 @@ const EditCource = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { courseDetails, loading } = useAppSelector((state) => state.courses);
+
   const [published, setPublished] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setdescription] = useState("");
@@ -24,15 +30,15 @@ const EditCource = () => {
   }, [dispatch, courseId]);
 
   useEffect(() => {
-  if (courseDetails) {
-    setTitle(courseDetails.title || "");
-    setdescription(courseDetails.description || "");
-    setCategory(courseDetails.category || "");
-    setPrice(courseDetails.price || "");
-    setLevel(courseDetails.level || "");
-    setPublished(Boolean(courseDetails.isPublished));
-  }
-}, [courseDetails]);
+    if (courseDetails) {
+      setTitle(courseDetails.title || "");
+      setdescription(courseDetails.description || "");
+      setCategory(courseDetails.category || "");
+      setPrice(courseDetails.price || "");
+      setLevel(courseDetails.level || "");
+      setPublished(Boolean(courseDetails.isPublished));
+    }
+  }, [courseDetails]);
   useEffect(() => {
     if (courseDetails) {
       setPublished(courseDetails.isPublished);
@@ -47,13 +53,14 @@ const EditCource = () => {
   const handelDelete = async (courseId) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
-       await dispatch(deleteCourse(courseId));
+        await dispatch(deleteCourse(courseId));
         navigate("/instructor/dashboard");
       } catch (error) {
         console.error("Error deleting course:", error);
         alert("Failed to delete course. Please try again.");
       }
-    }}
+    }
+  };
   const handelSubmit = async (e) => {
     e.preventDefault();
 
@@ -66,10 +73,12 @@ const EditCource = () => {
     formData.append("isPublished", published); // 🔥 IMPORTANT
     if (thumbnail) formData.append("thumbnail", thumbnail);
 
-    const result = await dispatch(editCourse({ courseId, updatedData : formData }));
+    const result = await dispatch(
+      editCourse({ courseId, updatedData: formData })
+    );
 
     if (editCourse.fulfilled.match(result)) {
-      alert("Course Updated Successfully!"); 
+      alert("Course Updated Successfully!");
 
       // 🔥 Re-fetch the course list
       dispatch(getCreatorCourses());
@@ -83,12 +92,31 @@ const EditCource = () => {
   return (
     <div className="max-w-7xl mx-auto pt-10 ">
       <div className="w-full flex justify-between items-center px-4">
-        <h2>Add detail information regarding course</h2>
+        <h2 className="flex gap-4 px-2">
+          {" "}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-move-left-icon lucide-move-left cursor-pointer"
+             onClick={() => navigate("/instructor/dashboard")}
+          >
+            <path d="M6 8L2 12L6 16" />
+            <path d="M2 12H22" />
+          </svg>{" "}
+          Add detail information regarding course
+        </h2>
         <Button
           variant="outline"
-          onClick={() => navigate("/instructor/dashboard")}
+          onClick={() => navigate(`/instructor/add-lecture/${courseDetails._id}`)}
         >
-          Back to Dashboard
+         Add Lecture
         </Button>
       </div>
       <div className="w-full p-6 rounded-lg bg-[#FAF9F6] mt-6">
@@ -107,7 +135,7 @@ const EditCource = () => {
               {published ? "published" : "click to Publish"}
             </button>
             <button
-              onClick={()=>handelDelete(courseDetails._id)}
+              onClick={() => handelDelete(courseDetails._id)}
               type="button"
               className="flex items-center justify-center p-2 px-4 border rounded-xl bg-red-600 text-white"
             >
@@ -137,14 +165,18 @@ const EditCource = () => {
             </div>
             <div>
               <label className="block mb-1 font-medium">Category</label>
-              <input
-                value={category}
-                type="text"
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                }}
+              <select
+                name="category"
+                id=""
                 className="w-full border px-3 py-2 rounded"
-              />
+                onChange={(e) => setCategory(e.target.value)}
+                value={category}
+              >
+                <option value="web Development">web Development</option>
+                <option value="Graphic Design">Graphic Design</option>
+                <option value="mobile Development">mobile Development</option>
+                <option value="Data Science">Data Science</option>
+              </select>
             </div>
             <div>
               <label className="block mb-1 font-medium">Thumbnail Image</label>
@@ -159,6 +191,7 @@ const EditCource = () => {
               <label className="block mb-1 font-medium">Price (INR)</label>
               <input
                 type="number"
+                value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 className="w-full border px-3 py-2 rounded"
               />
@@ -166,12 +199,13 @@ const EditCource = () => {
             <div>
               <label className="block mb-1 font-medium">Course Level</label>
               <select
+                name="level"
                 onChange={(e) => setLevel(e.target.value)}
                 className="w-full border px-3 py-2 rounded"
               >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
               </select>
             </div>
             <div className="flex justify-end">
