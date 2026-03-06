@@ -41,7 +41,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -83,7 +83,17 @@ api.interceptors.response.use(
       const message = error.response.data?.message || "Something went wrong";
 
       // Handle 401 (Unauthorized) - Token expired or invalid
-      if (status === 401 && !originalRequest._retry) {
+      const skipRefreshEndpoints = [
+        "/users/login",
+        "/users/signup",
+        "/users/refresh-token",
+        "/users/me",
+      ];
+
+      const shouldSkip = skipRefreshEndpoints.some((url) =>
+        originalRequest.url.includes(url),
+      );
+      if (status === 401 && !originalRequest._retry && !shouldSkip) {
         // Check if we're already refreshing
         if (isRefreshing) {
           // If already refreshing, queue this request
@@ -158,7 +168,7 @@ api.interceptors.response.use(
       message: "Network error. Please check your connection.",
       status: 0,
     });
-  }
+  },
 );
 
 /**
@@ -261,7 +271,7 @@ export const editCourse = async (courseId, updatedData) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
   return response.data;
 };
@@ -279,7 +289,7 @@ export const createLecture = async (courseId, lectureData) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
   return response.data;
 };
@@ -292,11 +302,30 @@ export const editLecture = async (lectureId, updatedData) => {
     `/lectures/edit-lecture/${lectureId}`,
     updatedData,
     {
-      headers: {  
+      headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
   return response.data;
-}
+};
+
+export const createRazerpayOrder = async (courseId) => {
+  const response = await api.post("/payments/create-order", { courseId });
+  return response.data;
+};
+
+export const verifyPaymentApi = async (paymentData) => {
+  const response = await api.post("/payments/verify-payment", paymentData);
+  return response.data;
+};
+
+export const createReview = async (courseId, reviewData) => {
+  const response = await api.post(
+    `/reviews/create-review/${courseId}`,
+    reviewData,
+  );
+  return response.data;
+};
+
 export default api;

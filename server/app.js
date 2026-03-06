@@ -44,8 +44,15 @@ app.use((err, req, res, next) => {
 import userRoutes from "./routes/user.route.js";
 import courseRoutes from "./routes/course.route.js";
 import lectureRoutes from "./routes/lecture.route.js"
+import paymentRoutes from "./routes/payment.route.js";
+import reviewRoutes from "./routes/review.route.js";
+
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/lectures", lectureRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/reviews", reviewRoutes);
+
+
 
 export default app;

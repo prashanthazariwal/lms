@@ -90,14 +90,14 @@ const ExploreCources = () => {
   ];
   return (
     <div className="w-full flex justify-between items-end p-4">
-      <div className="left w-1/3 h-[50dvh] relative bg-blue-400/30 backdrop-blur-md rounded-b-full overflow-hidden flex items-center justify-center">
+      <div className="left w-1/3 h-[50dvh] relative bg-blue-400/30 backdrop-blur-3xl rounded-b-full overflow-hidden flex items-center justify-center">
         <span className="inline-block w-[120%] h-full absolute bottom-full rotate-12  origin-bottom-left bg-[#FAF9F6]">
           {" "}
         </span>
         <img
           src="/images/girl.png"
           alt="girl"
-          className=" object-cover h-[50dvh] absolute left-1 top-0"
+          className=" object-cover h-[50dvh] absolute left-1 top-0" 
         />
       </div>
       <div className="right w-fit  h-[60dvh] capitalize px-8 flex flex-col justify-center ">
@@ -124,7 +124,11 @@ const ExploreCources = () => {
             );
           })}
         </div>
-        <Button children={"Exploure Cources"} variant="outline" className="mt-8" />
+        <Button
+          children={"Exploure Cources"}
+          variant="outline"
+          className="mt-8 cursor-pointer"
+        />
       </div>
     </div>
   );

@@ -3,6 +3,9 @@ import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice";
 import courseReducer from "./slices/courseSlice";
 import lectureReducer from "./slices/lectureSlice";
+import orderReducer from "./slices/orderSlice";
+import reviewReducer from "./slices/reviewSlice";
+
 /**
  * Redux Store Configuration
  *
@@ -32,6 +35,8 @@ export const store = configureStore({
     // Later you can add more slices:
     courses: courseReducer,
     lectures: lectureReducer,
+    orders: orderReducer,
+    reviews: reviewReducer,
     // students: studentReducer,
   },
 });

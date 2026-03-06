@@ -21,7 +21,7 @@ router.patch(
   uploadCourseThumbnail,
   editCourse
 );
-router.get("/:courseId", authenticate, getCourseDetails);
+router.get("/:courseId", getCourseDetails);
 router.delete("/remove/:courseId", authenticate, deleteCourse);
 
 export default router;

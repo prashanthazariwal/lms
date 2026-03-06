@@ -46,7 +46,9 @@ export const authenticate = async (req, res, next) => {
     // Why check database? User might have been deleted, or token might be from old session
     const user = await User.findById(decoded.userId).select(
       "-password -refreshToken"
-    );
+    ).populate('enrolledCourses');
+
+   
 
     if (!user) {
       throw new ApiError("User not found", 401);

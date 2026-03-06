@@ -1,19 +1,12 @@
-import { useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { getCurrentUser, signout } from "../store/slices/authSlice";
-import { useState } from "react";
-import { useRef } from "react";
+import { signout } from "../store/slices/authSlice";
+
 import HeroSection from "../sections/HeroSection";
 import ExploreCources from "../sections/ExploreCources";
 import PopularCources from "../sections/PopularCources";
-
-/**
- * Home/Dashboard Page
- *
- * This is a protected page - only logged in users can access it
- * Shows user profile and logout functionality
- */
+import AboutSection from "../sections/AboutSection";
 
 function Home() {
   const navigate = useNavigate();
@@ -21,14 +14,10 @@ function Home() {
   const [show, setShow] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Get user data from Redux state
-  const { user, loading } = useAppSelector((state) => state.auth);
-
-  // Fetch current user when component mounts
-  // This ensures we have the latest user data
-  useEffect(() => {
-    dispatch(getCurrentUser());
-  }, [dispatch]);
+  // Get auth state (DO NOT fetch here)
+  const { user, loading, isAuthenticated } = useAppSelector(
+    (state) => state.auth
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -41,12 +30,12 @@ function Home() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle logout
   const handleLogout = async () => {
     await dispatch(signout());
     navigate("/login");
   };
 
+  // Optional: show loader ONLY if auth is initializing
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -57,11 +46,11 @@ function Home() {
 
   return (
     <>
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4">
         <HeroSection />
-        <ExploreCources/>
-        <PopularCources/>
+        <ExploreCources />
+        <PopularCources />
+        <AboutSection />
       </main>
     </>
   );

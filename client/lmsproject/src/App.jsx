@@ -12,39 +12,59 @@ import EditCource from "./pages/EditCource";
 import AllCourcesPage from "./pages/AllCourcesPage";
 import CreateLecturePage from "./pages/CreateLecturePage";
 import ViewCoursePage from "./pages/ViewCoursePage";
+import ViewCourseLectures from "./pages/ViewCourseLectures";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* ---------- Public Routes ---------- */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
+    <>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          {/* ================= PUBLIC ROUTES ================= */}
+          <Route element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="/all-cources" element={<AllCourcesPage />} />
+            <Route path="/view-course/:courseId" element={<ViewCoursePage />} />
+          </Route>
 
-        {/* ---------- Protected Routes (with shared Navbar) ---------- */}
-        <Route
-          element={
-            <ProtectedRoute>
-              <Layout /> {/* 👈 Wrap protected pages in Layout */}
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          {/* You can add more protected pages here, e.g.: */}
-          <Route path="/instructor/dashboard" element={<Dashboard />} />
-          <Route path="/instructor/editCourse/:courseId" element={<EditCource />} />
-          <Route path="/instructor/add-lecture/:courseId" element={<CreateLecturePage />} />
-          <Route path="/all-cources" element={<AllCourcesPage />} />
-          <Route path="/view-course/:courseId" element={<ViewCoursePage/>} />
-        </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
 
-        {/* ---------- Redirect unknown routes ---------- */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* ---------- Protected Routes (with shared Navbar) ---------- */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <Layout /> {/* 👈 Wrap protected pages in Layout */}
+              </ProtectedRoute>
+            }
+          >
+            {/* Common Protected */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route
+              path="/view-course-lectures/:courseId"
+              element={<ViewCourseLectures />}
+            />
+
+            {/* Instructor Only */}
+            <Route path="/instructor/dashboard" element={<Dashboard />} />
+            <Route
+              path="/instructor/editCourse/:courseId"
+              element={<EditCource />}
+            />
+            <Route
+              path="/instructor/add-lecture/:courseId"
+              element={<CreateLecturePage />}
+            />
+          </Route>
+
+          {/* ---------- Redirect unknown routes ---------- */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

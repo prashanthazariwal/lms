@@ -9,7 +9,6 @@ import {
 import { Edit } from "lucide-react";
 import EditLectureModel from "../components/EditLectureModel";
 
-
 const CreateLecturePage = () => {
   const { courseId } = useParams();
   const [Preview, setPreview] = useState(false);
@@ -22,8 +21,9 @@ const CreateLecturePage = () => {
     dispatch(getCourseDetails(courseId));
   }, [dispatch]);
   const course = useSelector((state) => state?.courses?.courseDetails);
-  const lectures = useSelector((state) => state?.lectures?.lectures?.data);
+  const {lectures, loading} = useSelector((state) => state?.lectures);
 
+  console.log(lectures)
   const handlePreview = () => {
     setPreview(!Preview);
   };
@@ -87,13 +87,22 @@ const CreateLecturePage = () => {
             <button
               type="button"
               onClick={handlePreview}
-              className={`px-4 border ${
+              className={`group px-4 border ${
                 Preview
-                  ? "text-green-700 bg-green-200"
+                  ? " text-green-700 bg-green-200 "
                   : "text-red-700 bg-red-200"
-              } border-neutral-300 rounded-xl hover:bg-neutral-100 flex items-center justify-center p-2 `}
+              } border-neutral-300 rounded-xl hover:bg-neutral-100 flex items-center justify-center relative p-2 `}
             >
-              {Preview ? "free preview" : "Paid preview"}
+              {Preview ? "Free preview" : "Paid preview"}
+              <span
+                className=" absolute -top-12 left-1/2 -translate-x-1/2 w-max px-3 py-1 text-sm font-semibold text-neutral-700 bg-white border rounded-lg shadow-md opacity-0 invisible scale-95
+                transition-all duration-200
+                group-hover:opacity-100
+                group-hover:visible
+                group-hover:scale-100"
+              >
+                Click to make it {Preview ? "Paid" : "Free"}
+              </span>
             </button>
           </div>
           <label htmlFor="title text-sm block mb-2  text-neutral-700 font-medium">
@@ -128,19 +137,24 @@ const CreateLecturePage = () => {
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-4">Lecture Preview</h3>
           <div className="space-y-4">
-            {lectures && lectures.length === 0 && (
+            {lectures && lectures?.data?.length === 0 && (
               <p className="text-neutral-600">No lectures added yet.</p>
             )}
+            {lectures && loading && <p>Loading...</p>}
             {lectures &&
-              lectures.map((lecture) => (
+              lectures?.data?.map((lecture) => (
                 <div
                   key={lecture._id}
                   className="p-4 border flex items-center justify-between border-neutral-200 rounded-lg"
                 >
                   <h4 className="font-medium">{lecture.title}</h4>
                   <div className="flex items-center gap-4">
-                    <p className={`text-sm font-semibold ${lecture.isPreviewFee ? "text-green-700" : "text-red-700"}`}>
-                       {lecture.isPreviewFee ? "Free Preview" : "Paid Only"}
+                    <p
+                      className={`text-sm font-semibold ${
+                        lecture.isPreviewFee ? "text-green-700" : "text-red-700"
+                      }`}
+                    >
+                      {lecture.isPreviewFee ? "Free Preview" : "Paid Only"}
                     </p>
                     <button
                       variant="outline"

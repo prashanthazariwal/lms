@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
+    payments: [
+      {
+        type: String, // razorpay_payment_id
+      },
+    ],
     refreshToken: {
       type: String,
       default: null,

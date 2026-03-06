@@ -107,10 +107,7 @@ export const getCurrentUser = createAsyncThunk(
       // API returns: { message, statusCode, data: user }
       return response.data;
     } catch (error) {
-      // If getCurrentUser fails, clear auth state
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("user");
-      return rejectWithValue(error.message || "Failed to get user");
+      return rejectWithValue(error.message || "Unauthorized");
     }
   }
 );
@@ -202,10 +199,6 @@ const authSlice = createSlice({
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.loading = false;
-        state.user = null;
-        state.accessToken = null;
-        state.isAuthenticated = false;
-        state.error = action.payload;
       });
   },
 });

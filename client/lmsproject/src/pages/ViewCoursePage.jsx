@@ -1,35 +1,129 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCourseDetails } from "../store/slices/courseSlice";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Star } from "lucide-react";
 import Button from "../components/Button";
+import {
+  createOrderThunk,
+  verifyPaymentThunk,
+} from "../store/slices/orderSlice";
+import { getCurrentUser } from "../store/slices/authSlice";
+import { useMemo } from "react";
+import { createReviewThunk } from "../store/slices/reviewSlice";
 
 const ViewCoursePage = () => {
+  const navigate = useNavigate();
   const { courseId } = useParams();
   const dispatch = useDispatch();
   const [activeLecture, setActiveLecture] = useState(null);
+  const [stars, setStars] = useState(0);
+  const [review, setReview] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const userData = useSelector((state) => state?.auth?.user);
+  const course = useSelector((state) => state?.courses?.courseDetails);
+
+  // console.log(course);
+  // console.log(userData);
+
   useEffect(() => {
+    dispatch(getCurrentUser());
     dispatch(getCourseDetails(courseId));
   }, [courseId, dispatch]);
-
-  const course = useSelector((state) => state?.courses?.courseDetails);
-  console.log(course);
 
   useEffect(() => {
     if (course?.lectures?.length && !activeLecture) {
       setActiveLecture(course.lectures[0]);
     }
   }, [course]);
+
+  const handelEnroll = async (courseId) => {
+    try {
+      if (!userData) {
+        navigate("/login", {
+          state: { from: `/view-course/${courseId}` },
+        });
+        return;
+      }
+      const { payload } = await dispatch(
+        createOrderThunk({ courseId: courseId }),
+      );
+      console.log(payload);
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: payload.order.amount,
+        currency: payload.order.currency,
+        name: "LMS NoCap Academy",
+        description: "Test Transaction",
+        order_id: payload.order.id,
+        handler: async function (response) {
+          console.log("razorpay response", response);
+          try {
+            await dispatch(
+              verifyPaymentThunk({
+                courseId,
+                userId: userData._id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            );
+          } catch (error) {
+            console.error("Error verifying payment:", error);
+            alert("Failed to verify payment. Please try again.");
+          }
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Failed to create order. Please try again.");
+    }
+  };
+  const handelSubmitReview = async () => {
+    setLoading(true);
+    try {
+      const reviewData = {
+        rating: stars,
+        comment: review,
+      };
+      await dispatch(createReviewThunk({ courseId, reviewData }));
+      alert("Review created successfully!");
+      setReview("");
+      setStars(0);
+      dispatch(getCourseDetails(courseId));
+    } catch (error) {
+      console.error("Error creating review:", error);
+      alert("Failed to create review. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isEnrolled = useMemo(() => {
+    if (!userData?.enrolledCourses?.length) return false;
+
+    return userData.enrolledCourses.some((course) => {
+      // handles ObjectId string OR populated object
+      return typeof course === "string"
+        ? course === courseId
+        : course?._id === courseId;
+    });
+  }, [userData, courseId]);
+
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="w-full flex px-4 rounded-lg mb-6">
-        <div className="flex items-center justify-center w-2/5 h-[40dvh]  border border-neutral-300">
+      <div className="w-full flex px-4 rounded-lg my-6">
+        <div className="flex items-center justify-center w-2/5 h-[40dvh] rounded-md overflow-hidden  border border-neutral-600">
           {course?.thumbnail ? (
             <img
               src={course.thumbnail}
               alt={course.title}
-              className="w-1/2 h-full object-cover rounded-lg"
+              className="w-full h-full object-cover"
             />
           ) : (
             <BookOpen className="w-12 h-12 text-muted-foreground" />
@@ -60,7 +154,22 @@ const ViewCoursePage = () => {
             )}
           </h2>
 
-          <Button className="mt-4 w-fit rounded-xs ">Enroll Now</Button>
+          {isEnrolled ? (
+            <Button
+              onClick={() => navigate(`/view-course-lectures/${course._id}`)}
+              className="mt-4 w-fit rounded-xs bg-green-500 hover:bg-green-600 text-white"
+              variant="success"
+            >
+              Watch now
+            </Button>
+          ) : (
+            <Button
+              className="mt-4 w-fit rounded-xs "
+              onClick={() => handelEnroll(course._id)}
+            >
+              Enroll Now
+            </Button>
+          )}
         </div>
       </div>
       <ul className=" list-inside text-md font-mono mb-6 px-4 text-neutral-500">
@@ -150,10 +259,37 @@ const ViewCoursePage = () => {
         </div>
       </div>
 
-      <hr className="my-8"/>
-      <textarea className="w-full p-4  border border-neutral-200 px-3 py-2 rounded focus:border-neutral-500 focus:outline-none text-md" name="review" id="review" rows={4} placeholder="write your review here...."></textarea>
-      <Button className="mt-4 mb-8" variant="outline">Submit Review</Button>
-      <hr className="my-8"/>
+      <hr className="my-8" />
+      <div className="flex my-2">
+        {[1, 2, 3, 4, 5].map((item) => (
+          <Star
+            strokeWidth={1}
+            key={item}
+            className={item <= stars ? "fill-amber-300" : "fill-neutral-100"}
+            onClick={() => setStars(item)}
+          />
+        ))}
+      </div>
+
+      <textarea
+        className="w-full p-4  border border-neutral-200 px-3 py-2 rounded focus:border-neutral-500 focus:outline-none text-md"
+        name="review"
+        id="review"
+        value={review}
+        onChange={(e) => {
+          setReview(e.target.value);
+        }}
+        rows={4}
+        placeholder="write your review here...."
+      ></textarea>
+      <Button
+        onClick={handelSubmitReview}
+        className="mt-4 mb-8"
+        variant="outline"
+      >
+        Submit Review
+      </Button>
+      <hr className="my-8" />
     </div>
   );
 };

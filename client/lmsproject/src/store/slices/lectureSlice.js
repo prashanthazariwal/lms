@@ -3,6 +3,8 @@ import * as api from "../../services/api";
 
 const initialState = {
   lectures: [],
+  loading: false,
+  error: null,
 };
 // Async Thunks - For API calls related to lectures
 export const createLectureThunk = createAsyncThunk(
@@ -51,7 +53,7 @@ const lectureSlice = createSlice({
     });
     builder.addCase(createLectureThunk.fulfilled, (state, action) => {
       state.loading = false;
-      state.lectures.push(action.payload);
+      state.lectures.push(action.payload.data);
     });
     builder.addCase(createLectureThunk.rejected, (state, action) => {
       state.loading = false;
